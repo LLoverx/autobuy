@@ -1,0 +1,21 @@
+Options +FollowSymlinks -MultiViews
+
+AddType "text/html; charset=UTF-8" html 
+AddType "text/plain; charset=UTF-8" txt 
+
+<IfModule mod_rewrite.c> 
+	RewriteEngine On 
+	RewriteBase / 
+
+	# if file not exists 
+	RewriteCond %{REQUEST_FILENAME} !-f
+
+	# if dir not exists 	
+	RewriteCond %{REQUEST_FILENAME} !-d
+	 
+	# avoid 404s of missing assets in our script 
+	RewriteCond %{REQUEST_URI} !^.*\.(jpe?g|png|gif|css|js)$ [NC] 
+	
+	# core framework url rewriting 
+	RewriteRule ^ index.php [L]
+<IfModule mod_rewrite.c> 
