@@ -11,13 +11,9 @@
 	INNER JOIN 
 		my_players p 
 	ON 
-		t.player_id = p.myplayer_id 
-	INNER JOIN 
-		accounts a 
-	ON 
-		a.id = p.account_id 
+		t.player_id = p.player_id
 	ORDER BY 
-		p.myplayer_id DESC 
+		t.id DESC 
 	LIMIT 50");
 	$arrayTransactions = array();
 	foreach($results['results'] as $transaction) {

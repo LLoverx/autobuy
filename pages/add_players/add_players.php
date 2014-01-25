@@ -44,7 +44,7 @@
   				</div>
   				<div class="form-group">
     					<label for="player_pos">Player Position</label>
-    					<select class="form-control" name="player_pos">
+    					<select class="form-control player_pos_selec" name="player_pos">
     						<?
     							$positions = array(
     								"GK","LWB","LB","CB","RB","RWB","CDM","CM","CAM","CF","ST","RM","RW","RF","LM","LW","LF"

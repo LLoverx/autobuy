@@ -52,6 +52,7 @@
 			$response = $request->send();
 			$json = $response->json();
 			return $json;
+			
 		}
 		
 		
@@ -84,6 +85,7 @@
 			$request->setHeader('Content-Type', 'application/json');				
 			$response = $request->send();
 			$json = $response->json();
+
 			return $json;
 		}
 		
@@ -116,6 +118,8 @@
 			$request->setHeader('Content-Type', 'application/json');				
 			$response = $request->send();
 			$json = $response->json();
+			
+			
 			return $json;
 		}
 		
@@ -365,13 +369,6 @@
 			$getTradePile = $this->getWatchList();
 			foreach($getTradePile['auctionInfo'] as $singleTradePile){
 				
-				$insertest = array(
-					"content" => $singleTradePile
-				);
-				$db->connect();
-				$db->insert("test", $insertest);
-				$db->disconnect();
-				
 				if($singleTradePile['tradeState'] == null or $singleTradePile['tradeState'] == "expired"){
 					//sell
 					$id = $singleTradePile['itemData']['id'];
@@ -404,13 +401,48 @@
 					if($singleTradePile['bidState'] == 'highest'){
 						// quick sell
 						
-						$this->quicksell($singleTradePile['itemData']['id']);
-							
+						$quicksell = $this->quicksell($singleTradePile['itemData']['id']);
+													
 						$insertest = array(
 							"content" => 'called quicksell'
 						);
 						$db->connect();
 						$db->insert("test", $insertest);
+						$db->disconnect();
+						
+						
+						// get player info
+						$db->connect();
+						$db->where('player_id',$singleTradePile['itemData']['assetId']);
+						$get_playerinfo = $db->get("my_players");
+						$db->disconnect();
+						
+						if($get_playerinfo){
+							$rating = $get_playerinfo[0]['player_rating'];
+							
+							// calculate price
+							$profit = $this->calculatePrice($rating);
+							$sell_price = $profit+600;
+							
+						}else{
+							$profit = 0;
+							$sell_price = 0;
+							$rating = 0;
+						}
+						
+						$insertarray = array(
+							"player_id" => $singleTradePile['itemData']['assetId'],
+							"card_id" => $singleTradePile['itemData']['id'],
+							"buy_bin" => 600,
+							"sell_bin" => $sell_price,
+							"profit" => $profit,
+							"sold_time" => date("Y-m-d H:i:s"),
+							"status" => 1,
+							"rating" => $rating,
+							"test" => $singleTradePile['itemData']['assetId']
+						);
+						$db->connect();
+						$db->insert("transactions", $insertarray);
 						$db->disconnect();
 						
 					}else{
@@ -427,17 +459,7 @@
 						
 					}
 					
-					$update_array = array(
-						"sell_bin" => $singleTradePile['currentBid'],
-						"sold_time" => date("Y-m-d H:i:s")
-					);
-					$db->connect();
-					$db->where("card_id", $singleTradePile['itemData']['id']);
-					$db->update("transactions", $update_array);
-					
-					
-					$db->disconnect();
-					
+								
 				}
 				
 				$this->remove_expired($singleTradePile['tradeId']);
@@ -495,6 +517,30 @@
 			$db->where("nucleusId", $this->nuc);
 			$db->update("accounts", $update_array);
 			$db->disconnect();
+		}
+		
+		public function calculatePrice($rating){
+			
+			if($rating == 76){
+				return 8;
+			}elseif($rating == 77){
+				return 16;
+			}elseif($rating == 78){
+				return 24;
+			}elseif($rating == 79){
+				return 32;
+			}elseif($rating == 80){
+				return 40;
+			}elseif($rating == 81){
+				return 48;
+			}elseif($rating == 82){
+				return 56;
+			}elseif($rating == 83){
+				return 64;
+			}else{
+				return 600;
+			}
+						
 		}
 		
 	}

@@ -28,6 +28,16 @@ $(document).ready(function() {
     			switch(response) {
     				case "1":
     					$("#ajaxResponse").html("<div class='alert alert-success'><strong>Player account successfully.</div>");
+    					
+    					$('#player_search').val('');
+						$('#name_display').val('');
+						$('.player_pos_selec').val('GK');
+    					
+    					$('#player_search').show();
+						$('#name_display').hide();
+						
+						$('.ui-autocomplete-input').focus();
+    					
     				break;
     				case "3":
     					$("#ajaxResponse").html("<div class='alert alert-danger'><strong>Error adding player.</div>")
@@ -92,7 +102,12 @@ $(document).ready(function() {
         		$('#player_search').hide();
         		$('#name_display').show();
         		$('#name_display').val(ui.item.full_name);
+        		$('.player_pos_selec').val(ui.item.position);
         		
+        		setTimeout(function(){
+        			$('#addPlayer').trigger('submit');
+        		}, 500);
+        		 		
         		return false;
     		}
 	}).data("ui-autocomplete")._renderItem = function (ul, item) {

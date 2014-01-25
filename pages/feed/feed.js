@@ -1,5 +1,5 @@
 $(document).ready(function() {
 	
-	$('#accounts').dataTable();
+	//$('#accounts').dataTable();
 	
 } );

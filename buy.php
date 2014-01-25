@@ -118,6 +118,7 @@
 				$counter = 0;
 				
 				do{
+					$maxbiden = $row2['max_bin']-50;
 					usleep(4500);
 					$data_array = array(
 						"start" => $start,
@@ -127,7 +128,7 @@
 						"nation" => $row2['player_nationid'],
 						"team" => $row2['player_clubid'],
 						"minbid" => 150,
-						"maxbid" => $row2['max_bin']
+						"maxbid" => $maxbiden
 					);
 					$playersearch = $search->clean_playerSearch($data_array);
 					
@@ -142,6 +143,10 @@
 					$counter++;
 										
 					if(!empty($playersearch['auctionInfo'])) {
+						/*echo '<pre>';
+						print_r($playersearch['auctionInfo']);
+						echo '</pre>';
+						*/
 						foreach($playersearch['auctionInfo'] as $auctionInfo){
 							//print_r($auctionInfo);
 							if($auctionInfo['itemData']['assetId'] == $row2['player_id']){
@@ -149,11 +154,12 @@
 								$count = $playerCount[$row2['player_id']][$row2['player_rating']][$row2['player_style']];
 								echo $count;
 								if($count < 3){
-									if($auctionInfo['itemData']['rating'] == $row2['player_rating'] && $auctionInfo['expires'] < 3600) {
+									if($auctionInfo['itemData']['rating'] == $row2['player_rating'] && $auctionInfo['expires'] < 80000) {
 										$buy = $trade->trade($auctionInfo['tradeId']);
 										$bin = $auctionInfo['buyNowPrice'];
 										//echo 'bid';
-										$bid = $trade->Bid($auctionInfo['tradeId'], $row2['max_bin']);
+										$bid = $trade->Bid($auctionInfo['tradeId'], $row2['max_bin']);										
+										
 										if($bid['code'] == 470){
 											echo 'Script stopped: Not enough Money';
 										} elseif($bid['auctionInfo'][0]['tradeState'] == "closed") {
@@ -161,8 +167,9 @@
 											$timestamp = date("Y-m-d H:i:s");
 											$functions->addTrade($id,$row2['myplayer_id'],$timestamp,$bin,$user);
 											$trade->sortItemlist();
-											echo 'CALLED SORT ITEM LIST!!!!!';
-											echo '<hr />';
+											
+											echo 'BID!!!!!!!';
+
 										} else {
 										//invalid purchase
 										}
@@ -181,7 +188,7 @@
 					$search->getCredits();
 					$start = $start+10;
 				}
-				while($counter < 2);
+				while($counter < 1);
 				
 			}else{
 				echo 'mindre';

@@ -114,6 +114,7 @@
 				break;
 			}
 		}
+	
 		
 		public function addTrade($id,$playerID,$timestamp,$bin,$user) {
 			global $db;
